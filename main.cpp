@@ -2,7 +2,8 @@
 
 int main() {
     int a;
-    std::cin >> a;
-    std::cout << "Hello, World! " << a << std::endl;
+    int b;
+    std::cin >> a >> b;
+    std::cout << "Hello, World! " << a + b << std::endl;
     return 0;
 }
