@@ -1,0 +1,3 @@
+"A:\CLion 2020.2\bin\cmake\win\bin\cmake.exe" -E rm -f CMakeFiles\CubeSolver.dir/objects.a
+A:\MinGW\bin\ar.exe cr CMakeFiles\CubeSolver.dir/objects.a @CMakeFiles\CubeSolver.dir\objects1.rsp
+A:\MinGW\bin\g++.exe -g   -Wl,--whole-archive CMakeFiles\CubeSolver.dir/objects.a -Wl,--no-whole-archive  -o CubeSolver.exe -Wl,--out-implib,libCubeSolver.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\CubeSolver.dir\linklibs.rsp
