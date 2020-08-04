@@ -1,2 +1,2 @@
 "# CubeSolver" 
-This project was created for educational and entertainment purposes. Bad code is present.
+This project is creating for educational and entertainment purposes. Bad code is present.
