@@ -2,6 +2,7 @@
 #include <string>
 #include <queue>
 #include <vector>
+#include <fstream>
 
 #define W 1
 #define O 2
@@ -437,7 +438,7 @@ public:
             return Cross;
         else
         {
-            std::cout << "cross color isn't set\n";
+            std::cout << "cross color isn't setted\n";
             return 0;
         }
     }
@@ -927,6 +928,19 @@ public:
         {
             return DOWN.GetCenter();
         }
+        else
+            return 0;
+    }
+    int IsOneBottomCrossPieceSolved(int a)
+    {
+        if (DOWN.GetCenter() == RD.GetE_C1() && (RD.GetE_C2() == RIGHT.GetCenter()) && (DOWN.GetCenter() == a))
+            return DOWN.GetCenter();
+        else if (FD.GetE_C1() == DOWN.GetCenter() && (FD.GetE_C2() == FRONT.GetCenter()) && (DOWN.GetCenter() == a))
+            return DOWN.GetCenter();
+        else if (LD.GetE_C1() == DOWN.GetCenter() && (LD.GetE_C2() == LEFT.GetCenter()) && (DOWN.GetCenter() == a))
+            return DOWN.GetCenter();
+        else if (DOWN.GetCenter() == BD.GetE_C1() && (BD.GetE_C2() == BACK.GetCenter()) && (DOWN.GetCenter() == a))
+            return DOWN.GetCenter();
         else
             return 0;
     }
@@ -2765,6 +2779,52 @@ std::string Pre_SolveCross1(Cube cube1)
         }
     }
 }
+std::string Pre_SolveOneCrossPiece(Cube cube1)
+{
+    int ICS = cube1.IsOneBottomCrossPieceSolved(CrossColor);
+    if (ICS)
+    {
+        //ColorPrint(ICS);
+        //std::cout << "three cross pieces is solved\n";
+        //CrossColor = ICS;
+        return "";
+    }
+    int am = 0;
+    int n = 0;
+    std::vector<std::string> ngbrs;
+    std::queue<std::string> q;
+    Cube cur;
+    std::string buff;
+    for (int i = 0; i < 18; i++)
+    {
+        ngbrs.push_back(CreateNeighbors(i));
+        q.push(ngbrs[n]);
+        n++;
+    }
+    while (!q.empty())
+    {
+        cur = cube1;
+        buff = q.front();
+        am = cur.SetScramble(buff);
+        q.pop();
+        ICS = cur.IsOneBottomCrossPieceSolved(CrossColor);
+        if (ICS)
+        {
+            //std::cout << buff << "\n";
+            //ColorPrint(ICS);
+            //std::cout << " three cross pieces is solved\n";
+            //std::cout << "moves: " << am << "\n";
+            //CrossColor = ICS;
+            return buff;
+        }
+        for (int i = 0; i < 15; i++)
+        {
+            ngbrs.push_back(buff + CreateNeighbors(i, buff));
+            q.push(ngbrs[n]);
+            n++;
+        }
+    }
+}
 std::string Pre_SolveTwoCrossPieces(Cube cube1)
 {
     int ICS = cube1.AreTwoBottomCrossPiecesSolved(CrossColor);
@@ -2838,8 +2898,8 @@ std::string Pre_SolveThreeCrossPieces(Cube cube1)
         cur = cube1;
         buff = q.front();
         am = cur.SetScramble(buff);
-        if (am > 3)
-            return "";
+        //if (am > 3)
+        //	return "";
         q.pop();
         ICS = cur.AreThreeCrossPiecesSolved(CrossColor);
         if (ICS)
@@ -2859,7 +2919,7 @@ std::string Pre_SolveThreeCrossPieces(Cube cube1)
         }
     }
 }
-std::string Pre_SolveCross2(Cube cube1)
+std::string Pre_SolveFourCrossPieces(Cube cube1)
 {
     int ICS = cube1.IsCrossSolved(CrossColor);
     if (ICS)
@@ -2908,7 +2968,7 @@ std::string Pre_SolveOnePair(Cube cube1, std::string* sexymovecases, std::string
     if (cube1.IsOneBottomPairSolved(CrossColor))
         return "";
     Cube cur, cur2, cur3, cur4;
-    for (int l = 0; l < 5; l++)
+    for (int l = 0; l < 9; l++)
     {
         cur = cube1;
         cur.SetScramble(sexymovecases[l]);
@@ -2945,7 +3005,7 @@ std::string Pre_SolveTwoPairs(Cube cube1, std::string* sexymovecases, std::strin
     if (cube1.AreTwoBottomPairsSolved(CrossColor))
         return "";
     Cube cur, cur2, cur3, cur4;
-    for (int l = 0; l < 5; l++)
+    for (int l = 0; l < 9; l++)
     {
         cur = cube1;
         cur.SetScramble(sexymovecases[l]);
@@ -2982,7 +3042,7 @@ std::string Pre_SolveThreePairs(Cube cube1, std::string* sexymovecases, std::str
     if (cube1.AreThreeBottomPairsSolved(CrossColor))
         return "";
     Cube cur, cur2, cur3, cur4;
-    for (int l = 0; l < 5; l++)
+    for (int l = 0; l < 9; l++)
     {
         cur = cube1;
         cur.SetScramble(sexymovecases[l]);
@@ -3880,6 +3940,8 @@ std::vector <std::string> ScrambleParser(std::string Scramble)
 }
 std::string Scramblesimplifier(std::string scr)
 {
+    if (scr == "")
+        return "";
     std::vector <std::string> pars = ScrambleParser(scr);
     std::vector <std::string> sol, que;
     std::string buff;
@@ -4165,7 +4227,49 @@ std::string Scramblesimplifier(std::string scr)
     return buff;
 }
 
-std::string SolveCube(Cube cube1)
+std::string* ReadAlgsFromFile(int a)
+{
+    std::string path;
+    int size;
+    switch (a)
+    {
+        case 1:
+            path = "F2L.txt";
+            size = 102;
+            break;
+        case 2:
+            path = "OLL.txt";
+            size = 57;
+            break;
+        case 3:
+            path = "PLL.txt";
+            size = 21;
+            break;
+        case 4:
+            path = "Scrambles.txt";
+            size = 1002;
+            break;
+    }
+    std::string* line = new std::string[size];
+    if (line == NULL)
+        return NULL;
+    int i = 0;
+    std::ifstream fin;
+    fin.open(path);
+    if (fin.is_open())
+    {
+        while (!fin.eof())
+        {
+            getline(fin, line[i]);
+            //std::cout << line[i] << std::endl;
+            i++;
+        }
+    }
+    fin.close();
+    return line;
+}
+
+std::string SolveCube(Cube cube1, bool flag)
 {
     //std::string allmoves[19] = { "U'","U","U2","","R","R2","R'","F","F2","F'","L","L2","L'","B","B2","B'","D","D2","D'" };
 
@@ -4173,114 +4277,138 @@ std::string SolveCube(Cube cube1)
 
     std::string aufcases[4] = { "","U","U2","U'" };
 
-    std::string sexymovecases[5] = { "","RUR'","L'U'L","R'U'R","LUL'" };
+    std::string sexymovecases[9] = { "","RUR'","L'U'L","R'U'R","LUL'","RU2R'","L'U2L","R'U2R","LU2L'" };
 
-    std::string f2lcases[41] = { "URU'R'","U'F'UF","RUR'","F'U'F","RU'R'URU'R'","F'UFU'F'UF",
-                                 "RUR'U'RUR'","F'U'FUF'U'F","U'RUR'U2RU'R'","UF'U'FU2F'UF","U'RU2R'U2RU'R'","UF'U2FU2F'UF",
-                                 "U'RU'R'UF'U'F","UF'UFU'RUR'","U'RU2R'UF'U'F","RU'R'URU'R'U2RU'R'","U'RU'R'URUR'","UF'UFU'F'U'F",
-                                 "R2B'R'BR'U2RU'R'","F2LFL'FU2F'UF","RU2R'U'RUR'","F'U2FUF'U'F","URU2R'URU'R'","U'F'U2FU'F'UF",
-                                 "U2RUR'URU'R'","U2F'U'FU'F'UF","URU'R'U'RU'R'URU'R'","U'F'UFUF'UFU'F'UF","R'F'RURU'R'F","URU'R'FR'F'R",
-                                 "U'R'FRF'RU'R'","URU'R'URU'R'URU'R'","U'RU'R'U2RU'R'","U'RU2R'URUR'","U'RUR'UF'U'F","UF'U'FU'RUR'",
-                                 "RU'R'U'RUR'U2RU'R'","F'UFUF'U'FU2F'UF","RU'R'U'RU'R'UF'U'F","F'UFU2RU'R'U'RUR'","RU'R'UF'U2FU2F'UF" };
+    std::string* f2lcases = ReadAlgsFromFile(1);
 
-    std::string ollcases[57] = { "RU2R2FRF'U2R'FRF'","FRUR'U'F'BULU'L'B'","L'RB'LU2L'B'RB'R2L","L'R2BR'BLU2L'BR'L","RUR'UR'FRF'U2R'FRF'","LFR'FRF2L2B'RB'R'B2L",
-                                 "L'B2RBR'BL2F2R'F'RF'L'","L'RBRBR'B'L2R2FRF'L'","RU2R2U'RU'R'U2FRF'","FRUR'U'RF'LFR'F'L'","FURU'R'URU'R'F'","R'U'RU'R'UF'UFR","LF2R'F'RFR'F'RF'L'","L'B2RBR'B'RBR'BL",
-                                 "RB'R2FR2BR2F'R","R'FR2B'R2F'R2BR'","FRUR'U'RUR'U'F'","B'R'U'RUR'U'RUB","LFR'FRF2L'","L'B'RB'R'B2L","LR2F'RF'R'F2RF'RL'","L'R2BR'BRB2R'BR'L","R'U'RFR'F'UFRF'","U2RUR'UR'FRF'RU2R'",
-                                 "L'B2RBR'BL","LF2R'F'RF'L'","FURU'U'R'U'RUR'F'","R'FRUR'F'RFU'F'","LFL'RUR'U'LF'L'","R'F'RL'U'LUR'FR","RUR'URU2R'FRUR'U'F'","R'U'RUFRUR'U'R'URU'F'","R2UR'B'RU'R2URBR'",
-                                 "RUR'U'RU'R'F'U'FRUR'","RUB'U'R'URBR'","R'U'FURU'R'F'R","FRU'R'U'RUR'F'","FURU'R'F'","B'U'R'URB","RU2R2FRF'RU2R'","FRUR'U'F'","RUR'U'R'FRF'","RB'R'U'RUBU'R'","R'FRUR'U'F'UR",
-                                 "RUR2U'R'FRURU'F'","R'U'R'FRF'UR","RUR'URU'R'U'R'FRF'", "R'U'RU'R'URURB'R'B","RU2R'U'RUR'U'RU'R'","RU2R2U'R2U'R2U2R","R'U2RFU'R'U'RUF'","LFR'F'L'FRF'","F'LFR'F'L'FR","RU2R'U'RU'R'",
-                                 "RUR'URU2R'","LFR'F'L'RURU'R'","RUR'U'LR'FRF'L'" };
+    std::string* ollcases = ReadAlgsFromFile(2);
 
-    std::string pllcases[21] = { "R'FR'B2RF'R'B2R2","R2B2RFR'B2RF'R","R'U'R'D'RU'R'DRUR'D'RUR'DR2","R'UR'U'R'U'R'URUR2","R2U'R'U'RURURU'R","R'U'RU'RURU'R'URUR2U'R'","R2U2R'U2R2U2R2U2R'U2R2",
-                                 "RUR'F'RUR'U'R'FR2U'R'","L'R'U2RUR'U2LU'R",	"R'U2RU2R'FRUR'U'R'F'R2","RU2R'U2RB'R'U'RURBR2","RUR'U'R'FR2U'R'U'RUR'F'","R'U'F'RUR'U'R'FR2U'R'U'RUR'UR","L'URU'LUL'UR'U'LU2RU'U'R'",
-                                 "FRU'R'U'RUR'F'RUR'U'R'FRF'","R'URU'R'F'U'FRUR'FR'F'RU'R","RU'R'URBUB'R'U'RB'RBR'UR'","RUR'F2D'LU'L'UL'DF2","R2D'FU'FUF'DR2BU'B'","F'U'FR2DB'UBU'BD'R2","R2DB'UB'U'BD'R2F'UF" };
+    std::string* pllcases = ReadAlgsFromFile(3);
 
     Cube cur = cube1;
-    std::string a0, a, b, b1, b2, b3, c, d, e, f, g, h, i, j, solution;
+    std::string pre_cube, pre_cross, frist_cross_piece, second_cross_piece, third_cross_piece,
+            fourth_cross_piece, first_f2l_pair, second_f2l_pair, third_f2l_pair, fourth_f2l_pair, OLL, PLL, AUF, solution;
 
-    a0 = Pre_SolveCube(cur);
-    //std::cout << a0 << "  -  pre cube (3 step max)\n";
-    cur.SetScramble(a0);
+    pre_cube = Pre_SolveCube(cur);
+    cur.SetScramble(pre_cube);
+    if (flag)
+        std::cout << pre_cube << "  -  pre cube (3 step max)\n";
 
-    a = Pre_SolveCross1(cur);
-    //std::cout << a << "  -  pre cross (3 step max)\n";
-    cur.SetScramble(a);
+    pre_cross = Pre_SolveCross1(cur);
+    cur.SetScramble(pre_cross);
+    if (flag)
+        std::cout << pre_cross << "  -  pre cross (3 step max)\n";
 
-    b = Pre_SolveThreeCrossPieces(cur);
-    //std::cout << b << "  -  3 cross pieces (4 step max)\n";
-    cur.SetScramble(b);
+    frist_cross_piece = Pre_SolveOneCrossPiece(cur);
+    cur.SetScramble(frist_cross_piece);
+    if (flag)
+        std::cout << frist_cross_piece << "  -  1st cross piece\n";
 
-    b1 = Pre_SolveTwoCrossPieces(cur);
-    //std::cout << b1 << "  -  2 cross pieces\n";
-    cur.SetScramble(b1);
+    second_cross_piece = Pre_SolveTwoCrossPieces(cur);
+    cur.SetScramble(second_cross_piece);
+    if (flag)
+        std::cout << second_cross_piece << "  -  2nd cross piece\n";
 
-    b2 = Pre_SolveCross1(cur);
-    //std::cout << b2 << "  -  pre cross2 (3 step max)\n";
-    cur.SetScramble(b2);
+    third_cross_piece = Pre_SolveThreeCrossPieces(cur);
+    cur.SetScramble(third_cross_piece);
+    if (flag)
+        std::cout << third_cross_piece << "  -  3rd cross piece\n";
 
-    b3 = Pre_SolveThreeCrossPieces(cur);
-    //std::cout << b3 << "  -  3 cross pieces\n";
-    cur.SetScramble(b3);
+    fourth_cross_piece = Pre_SolveFourCrossPieces(cur);
+    cur.SetScramble(fourth_cross_piece);
+    if (flag)
+        std::cout << fourth_cross_piece << "  -  4th cross piece\n";
 
-    c = Pre_SolveCross2(cur);
-    //std::cout << c << "  -  cross\n";
-    cur.SetScramble(c);
+    first_f2l_pair = Pre_SolveOnePair(cur, sexymovecases, rotcases, aufcases, f2lcases);
+    cur.SetScramble(first_f2l_pair);
 
-    d = Pre_SolveOnePair(cur, sexymovecases, rotcases, aufcases, f2lcases);
-    //std::cout << d << "  -  1 pair\n";
-    cur.SetScramble(d);
+    second_f2l_pair = Pre_SolveTwoPairs(cur, sexymovecases, rotcases, aufcases, f2lcases);
+    cur.SetScramble(second_f2l_pair);
 
-    e = Pre_SolveTwoPairs(cur, sexymovecases, rotcases, aufcases, f2lcases);
-    //std::cout << e << "  -  2 pair\n";
-    cur.SetScramble(e);
+    third_f2l_pair = Pre_SolveThreePairs(cur, sexymovecases, rotcases, aufcases, f2lcases);
+    cur.SetScramble(third_f2l_pair);
 
-    f = Pre_SolveThreePairs(cur, sexymovecases, rotcases, aufcases, f2lcases);
-    //std::cout << f << "  -  3 pair\n";
-    cur.SetScramble(f);
+    fourth_f2l_pair = Pre_SolveFourPairs(cur, aufcases, f2lcases);
+    cur.SetScramble(fourth_f2l_pair);
 
-    g = Pre_SolveFourPairs(cur, aufcases, f2lcases);
-    //std::cout << g << "  -  4 pair\n";
-    cur.SetScramble(g);
+    OLL = Pre_OLL(cur, aufcases, ollcases);
+    cur.SetScramble(OLL);
 
-    h = Pre_OLL(cur, aufcases, ollcases);
-    //std::cout << h << "  -  oll\n";
-    cur.SetScramble(h);
+    PLL = Pre_PLL(cur, aufcases, pllcases);
+    cur.SetScramble(PLL);
 
-    i = Pre_PLL(cur, aufcases, pllcases);
-    //std::cout << i << "  -  pll\n";
-    cur.SetScramble(i);
+    AUF = Pre_AUF(cur, aufcases);
+    cur.SetScramble(AUF);
 
-    j = Pre_AUF(cur, aufcases);
-    //std::cout << j << "  -  auf\n";
-    cur.SetScramble(j);
+    if (flag)
+    {
+        std::cout << pre_cross + frist_cross_piece + second_cross_piece + third_cross_piece + fourth_cross_piece << "  -  cross\n";
+        std::cout << first_f2l_pair << "  -  1st f2l pair\n";
+        std::cout << second_f2l_pair << "  -  2nd f2l pair\n";
+        std::cout << third_f2l_pair << "  -  3rd f2l pair\n";
+        std::cout << fourth_f2l_pair << "  -  4th f2l pair\n";
+        std::cout << OLL << "  -  oll\n";
+        std::cout << PLL << "  -  pll\n";
+        std::cout << AUF << "  -  auf\n";
+    }
 
-    solution = Scramblesimplifier(a0 + a + b + b1 + b2 + b3 + c + d + e + f + g + h + i + j);
+    solution = Scramblesimplifier(pre_cube + pre_cross + frist_cross_piece + second_cross_piece + third_cross_piece + fourth_cross_piece +
+                                  first_f2l_pair + second_f2l_pair + third_f2l_pair + fourth_f2l_pair + OLL + PLL + AUF);
 
     return solution;
 }
-//Сделать получение алгоритмов из файла.
-//Добавить больше случаев f2l из pdf.
-//Допилить симплифаер U'U' и тд.
-int main()
+void TestFromFile()
 {
     std::string solve;
     int am;
-    /*Cube Cube2("E");
-	Cube2.PrintCube();
-	BoolCheck(Cube2.IsLastLayerPermuted());*/
-    Cube Cube1("R' U' F2 L2 F2 U L2 D F2 L2 U F2 U B' R B L' B' L2 D' R2");
+    std::string* scramble = ReadAlgsFromFile(4);
+    Cube Cube1;
+    for (int i = 0; i < 1000; i++)
+    {
+        Cube1.SetScramble(scramble[i]);
+        solve = SolveCube(Cube1, false);
+        am = Cube1.SetScramble(solve);
+        std::cout << i + 1 << " Moves: " << am << ' ';
+        Cube1.PrintBoolIsSolved();
+        std::cout << '\n';
+    }
+}
+void TestFromCMD()
+{
+    std::string solve;
+    int am;
+    Cube Cube1;
+    std::string scramble;
+    std::cout << "{x, y, z, l, r, u, d, f, b, M, S, E} aren't allowed. \n Use only {L, R, U, D, F, B} and (\"'\" , \"2\")\n";
+    while(true)
+    {
+        std::cout << "Enter the scramble:\n";
+        std::cin >> scramble;
+        Cube1.SetScramble(scramble);
+        solve = SolveCube(Cube1, true);
+        am = Cube1.SetScramble(solve);
+        std::cout << "Moves: " << am << '\n';
+        std::cout << "Solution: " << solve << '\n';
+        Cube1.PrintBoolIsSolved();
+        std::cout << '\n';
+    }
+}
+//need to finish simplifier
+int main()
+{
+    //TestFromCMD();
+    std::string solve;
+    int am;
+    Cube Cube1("RURURUR");
     Cube1.PrintCube();
-    solve = SolveCube(Cube1);
-    std::cout << "Solution: " << solve << "\n";
+    solve = SolveCube(Cube1, true);
     am = Cube1.SetScramble(solve);
-    std::cout << "Moves: " << am << "\n";
+    std::cout << "Moves: " << am << '\n';
+    std::cout << "Solution: " << solve << '\n';
     Cube1.PrintCube();
     Cube1.PrintBoolIsSolved();
 }
 
 //Comments for Testing
-//3 step cross Scramble D2 L D2 R' U2 F2 R' B2 F2 D2 B2 R' F U B2 U2 R F2 D2 U L'
-//T perm - R (U R') U' (R' F) (R2 U') R' U' R (U R') F' 
-// L R2 B' D2 F' U2 F' D2 L2 R' F2 U' R U' R' D' R test 1
-//fast FRD - RUR'U' FLD - L'U'LU  BRD - R'U'RU  BLD - LUL'U'   
 //problem Scrambles
+//
