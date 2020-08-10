@@ -438,7 +438,7 @@ public:
             return Cross;
         else
         {
-            std::cout << "cross color isn't setted\n";
+            std::cout << "cross color isn't set\n";
             return 0;
         }
     }
@@ -933,13 +933,13 @@ public:
     }
     int IsOneBottomCrossPieceSolved(int a)
     {
-        if (DOWN.GetCenter() == RD.GetE_C1() && (RD.GetE_C2() == RIGHT.GetCenter()) && (DOWN.GetCenter() == a))
+        if (DOWN.GetCenter() == RD.GetE_C2() && (RD.GetE_C1() == RIGHT.GetCenter()) && (DOWN.GetCenter() == a))
             return DOWN.GetCenter();
-        else if (FD.GetE_C1() == DOWN.GetCenter() && (FD.GetE_C2() == FRONT.GetCenter()) && (DOWN.GetCenter() == a))
+        else if (FD.GetE_C2() == DOWN.GetCenter() && (FD.GetE_C1() == FRONT.GetCenter()) && (DOWN.GetCenter() == a))
             return DOWN.GetCenter();
         else if (LD.GetE_C1() == DOWN.GetCenter() && (LD.GetE_C2() == LEFT.GetCenter()) && (DOWN.GetCenter() == a))
             return DOWN.GetCenter();
-        else if (DOWN.GetCenter() == BD.GetE_C1() && (BD.GetE_C2() == BACK.GetCenter()) && (DOWN.GetCenter() == a))
+        else if (DOWN.GetCenter() == BD.GetE_C2() && (BD.GetE_C1() == BACK.GetCenter()) && (DOWN.GetCenter() == a))
             return DOWN.GetCenter();
         else
             return 0;
@@ -3938,13 +3938,46 @@ std::vector <std::string> ScrambleParser(std::string Scramble)
     }
     return out;
 }
+std::string handler(int a, std::string str)
+{
+    std::string buff = "";
+
+    if (str.at(0) == 'L')
+        buff = "L";
+    else if (str.at(0) == 'R')
+        buff = "R";
+    else if (str.at(0) == 'U')
+        buff = "U";
+    else if (str.at(0) == 'D')
+        buff = "D";
+    else if (str.at(0) == 'F')
+        buff = "F";
+    else if (str.at(0) == 'B')
+        buff = "B";
+
+    switch (a)
+    {
+        case 1://AA
+            return buff + "2";
+        case 2://AA2
+            return buff + "'";
+        case 3://A2A
+            return buff + "'";
+        case 4://A'A'
+            return buff + "2";
+        case 5://A'A2
+            return buff;
+        case 6://A2A'
+            return buff;
+    }
+}
 std::string Scramblesimplifier(std::string scr)
 {
     if (scr == "")
         return "";
     std::vector <std::string> pars = ScrambleParser(scr);
     std::vector <std::string> sol, que;
-    std::string buff;
+    std::string buff = "";
     for (int i = 0; i < pars.size(); i++)
     {
         {
@@ -4219,11 +4252,78 @@ std::string Scramblesimplifier(std::string scr)
             sol.push_back(pars.at(i));
         }
     }
-    buff = sol.at(0);
-    for (int j = 1; j < sol.size(); j++)
+
+    //Print Unhandled Scramble
+    /*buff = sol.at(0);
+	for (int j = 1; j < sol.size(); j++)
+		buff += sol.at(j);
+	std::cout << "Solution: " << buff << '\n';*/
+
+    buff = "";
+    for (int n = 0; n < sol.size() - 1; n++)
     {
-        buff += sol.at(j);
+        if (sol.at(n).at(0) == sol.at(n + 1).at(0))
+        {
+            //AA
+            if (sol.at(n).size() == 1 && sol.at(n + 1).size() == 1)
+            {
+                buff += handler(1, sol.at(n));
+                n++;
+            }
+            else if (sol.at(n).size() == 1 && sol.at(n + 1).size() == 2)
+            {
+                //AA'
+                if (sol.at(n + 1).at(1) == '\'')
+                    n++;
+                    //AA2
+                else if (sol.at(n + 1).at(1) == '2')
+                {
+                    buff += handler(2, sol.at(n));
+                    n++;
+                }
+            }
+            else if (sol.at(n).size() == 2 && sol.at(n + 1).size() == 1)
+            {
+                //A'A
+                if (sol.at(n).at(1) == '\'')
+                    n++;
+                    //A2A
+                else if (sol.at(n).at(1) == '2')
+                {
+                    buff += handler(3, sol.at(n));
+                    n++;
+                }
+            }
+            else if (sol.at(n).size() == 2 && sol.at(n + 1).size() == 2)
+            {
+                //A'A'
+                if (sol.at(n).at(1) == '\'' && sol.at(n + 1).at(1) == '\'')
+                {
+                    buff += handler(4, sol.at(n));
+                    n++;
+                }
+                    //A2A2
+                else if (sol.at(n).at(1) == '2' && sol.at(n + 1).at(1) == '2')
+                    n++;
+                    //A'A2
+                else if (sol.at(n).at(1) == '\'' && sol.at(n + 1).at(1) == '2')
+                {
+                    buff += handler(5, sol.at(n));
+                    n++;
+                }
+                    //A2A'
+                else if (sol.at(n).at(1) == '2' && sol.at(n + 1).at(1) == '\'')
+                {
+                    buff += handler(6, sol.at(n));
+                    n++;
+                }
+            }
+        }
+        else
+            buff += sol.at(n);
     }
+    if (!(sol.at(sol.size() - 1).at(0) == sol.at(sol.size() - 2).at(0)))
+        buff += sol.at(sol.size() - 1);
     return buff;
 }
 
@@ -4361,6 +4461,7 @@ void TestFromFile()
 {
     std::string solve;
     int am;
+    int avg = 0;
     std::string* scramble = ReadAlgsFromFile(4);
     Cube Cube1;
     for (int i = 0; i < 1000; i++)
@@ -4368,10 +4469,15 @@ void TestFromFile()
         Cube1.SetScramble(scramble[i]);
         solve = SolveCube(Cube1, false);
         am = Cube1.SetScramble(solve);
-        std::cout << i + 1 << " Moves: " << am << ' ';
-        Cube1.PrintBoolIsSolved();
+        std::cout << i + 1 << " Moves: " << am << '\n';
+        //std::cout << "Solution: " << solve << '\n';
+        if (!Cube1.IsSolved())
+            std::cout << "Cube isn't solved\n";
+        //Cube1.PrintBoolIsSolved();
         std::cout << '\n';
+        avg += am;
     }
+    std::cout << "AVG Moves: " << avg / 1000 << '\n';
 }
 void TestFromCMD()
 {
@@ -4393,20 +4499,25 @@ void TestFromCMD()
         std::cout << '\n';
     }
 }
-//need to finish simplifier
+
 int main()
 {
-    //TestFromCMD();
-    std::string solve;
-    int am;
-    Cube Cube1("RURURUR");
-    Cube1.PrintCube();
-    solve = SolveCube(Cube1, true);
-    am = Cube1.SetScramble(solve);
-    std::cout << "Moves: " << am << '\n';
-    std::cout << "Solution: " << solve << '\n';
-    Cube1.PrintCube();
-    Cube1.PrintBoolIsSolved();
+    switch (0)
+    {
+        case 0:
+            TestFromFile();
+        case 1:
+            std::string solve;
+            int am;
+            Cube Cube1("D2 F2 U R2 B2 U' B2 U R2 F2 U' L R F' R' U' L B' U R2 U2");
+            Cube1.PrintCube();
+            solve = SolveCube(Cube1, false);
+            am = Cube1.SetScramble(solve);
+            std::cout << "Moves: " << am << '\n';
+            std::cout << "Solution: " << solve << '\n';
+            Cube1.PrintCube();
+            Cube1.PrintBoolIsSolved();
+    }
 }
 
 //Comments for Testing
