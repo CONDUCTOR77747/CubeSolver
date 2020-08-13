@@ -1,3 +1,0 @@
-C:/Google Disk/CLionProjects/CubeSolver/cmake-build-debug/CMakeFiles/CubeSolver.dir
-C:/Google Disk/CLionProjects/CubeSolver/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Google Disk/CLionProjects/CubeSolver/cmake-build-debug/CMakeFiles/rebuild_cache.dir
