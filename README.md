@@ -9,7 +9,7 @@ Main methods of this class are:
 - PrintBoolIsSolved(); //Prints True or False in CMD
 
 # Solve Function:
-string SolveCube(Cube objCube, string Mode); //Takes cube object and programm mode
+string SolveCube(Cube objCube, string Mode); //Takes cube object and programm mode. This function returns solution in string format
 
 # Programm modes for "SolveCube" function:
 - "Gen" //Uses "theriley106/C-ScrambleGenerator" for generating scramble and solves the cube
