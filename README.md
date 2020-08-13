@@ -1,6 +1,10 @@
 # CubeSolver
 Programm for solving a Rubik's Cube 3x3x3 using CFOP.
 
+# Using
+MVS compiler is recommended.
+Download all files, compile and run the programm.
+
 # Cube Representation
 There is a Class "Cube".
 Main methods of this class are:
