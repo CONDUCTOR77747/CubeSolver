@@ -12,9 +12,9 @@ Main methods of this class are:
 string SolveCube(Cube objCube, string Mode); //Takes cube object and programm mode
 
 # Programm modes for "SolveCube" function:
-1 - "Gen" //Uses "theriley106/C-ScrambleGenerator" for generating scramble and solves the cube
-2 - "File" //Uses "Algorithms/Scrambles.txt" File with scrambles
-3 - "Default" //Manually scramble input in the source code
-4 - "CMD" //Scramble input via CMD
+- "Gen" //Uses "theriley106/C-ScrambleGenerator" for generating scramble and solves the cube
+- "File" //Uses "Algorithms/Scrambles.txt" File with scrambles
+- "Default" //Manually scramble input in the source code
+- "CMD" //Scramble input via CMD
 
 You can choose mode via switch in CubeSolver.cpp
