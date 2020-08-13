@@ -10,7 +10,7 @@ int main()
 	// 2 - File Mode
 	// 3 - Default Mode
 	// 4 - CMD Mode (Recommended)
-	switch (3)
+	switch (4)
 	{
 	case 1:
 		//Scramble Generator Mode
@@ -49,4 +49,3 @@ int main()
 	}
 }
 //ProblemScrambles
-//
