@@ -12,7 +12,7 @@ Main methods of this class are:
 string SolveCube(Cube objCube, string Mode); //Takes cube object and programm mode. This function returns solution in string format
 
 # Programm modes for "SolveCube" function:
-- "Gen" //Uses "theriley106/C-ScrambleGenerator" for generating scramble
+- "Gen" //Uses "theriley106/C-ScrambleGenerator" for generating random scramble
 - "File" //Uses "Algorithms/Scrambles.txt" File with scrambles
 - "Default" //Manually scramble input in the source code
 - "CMD" //Scramble input via CMD
