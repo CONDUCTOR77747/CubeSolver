@@ -1,5 +1,6 @@
 # CubeSolver
 Programm for solving a Rubik's Cube 3x3x3 using CFOP.
+AVG moves: 62 (Tested with 10000 scrambles)
 
 # Using
 MVS compiler is recommended.
