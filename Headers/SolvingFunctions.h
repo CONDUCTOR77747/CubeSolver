@@ -977,19 +977,19 @@ std::string* ReadAlgsFromFile(int a, int len)
 	switch (a)
 	{
 	case 1:
-		path = "F2L.txt";
+		path = "C:\GoogleDisk\repos\Classes and Methods\Classes and Methods\Algorithms\F2L.txt";
 		size = 103;
 		break;
 	case 2:
-		path = "OLL.txt";
+		path = "C:\GoogleDisk\repos\Classes and Methods\Classes and Methods\Algorithms\OLL.txt";
 		size = 57;
 		break;
 	case 3:
-		path = "PLL.txt";
+		path = "C:\GoogleDisk\repos\Classes and Methods\Classes and Methods\Algorithms\PLL.txt";
 		size = 21;
 		break;
 	case 4:
-		path = "Scrambles.txt";
+		path = "Algorithms/Scrambles.txt";
 		size = len;
 		break;
 	}

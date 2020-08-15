@@ -9,7 +9,7 @@ void TestFromFile(int size)
 	int avg = 0;
 	std::string* scramble = ReadAlgsFromFile(4, size);
 	Cube Cube1;
-	for (int i = 0; i < 10000; i++)
+	for (int i = 0; i < size; i++)
 	{
 		Cube1.SetScramble(scramble[i]);
 		solve = SolveCube(Cube1, "File");

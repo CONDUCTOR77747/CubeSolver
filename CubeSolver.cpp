@@ -5,11 +5,11 @@ int main()
 	std::string solve, scr;
 	int am;
 	Cube Cube1;
-	//Choose Mode via switch
-	// 1 - ScrGen Mode
-	// 2 - File Mode
-	// 3 - Default Mode
-	// 4 - CMD Mode (Recommended)
+	/*Choose Mode via switch
+	 1 - ScrGen Mode
+	 2 - File Mode
+	 3 - Default Mode
+	 4 - CMD Mode (Recommended)*/
 	switch (4)
 	{
 	case 1:
@@ -31,7 +31,7 @@ int main()
 		break;
 	case 3:
 		//Default (Manually) Mode
-		scr = "URLRUL";
+		scr = "U2 L2 B2 D L2 R2 D B2 D F2 U B' R F2 U F' D' U' B' R' D2";
 		std::cout << "Scramble: " << scr << '\n';
 		Cube1.SetScramble(scr);
 		Cube1.PrintCube();
